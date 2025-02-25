@@ -24,6 +24,7 @@ class ProductItemDetails extends Component {
     similarProductsData: [],
     apiStatus: apiStatusConstants.initial,
     quantity: 1,
+    addedToCartQuantity: 0, // State to track added quantity
   }
 
   componentDidMount() {
@@ -70,8 +71,7 @@ class ProductItemDetails extends Component {
         similarProductsData: updatedSimilarProductsData,
         apiStatus: apiStatusConstants.success,
       })
-    }
-    if (response.status === 404) {
+    } else {
       this.setState({
         apiStatus: apiStatusConstants.failure,
       })
@@ -101,20 +101,26 @@ class ProductItemDetails extends Component {
   )
 
   onDecrementQuantity = () => {
-    const {quantity} = this.state
-    if (quantity > 1) {
-      this.setState(prevState => ({quantity: prevState.quantity - 1}))
-    }
+    this.setState(prevState => ({
+      quantity: prevState.quantity > 1 ? prevState.quantity - 1 : 1,
+    }))
   }
 
   onIncrementQuantity = () => {
-    this.setState(prevState => ({quantity: prevState.quantity + 1}))
+    this.setState(prevState => ({
+      quantity: prevState.quantity + 1,
+    }))
   }
 
   renderProductDetailsView = () => (
     <CartContext.Consumer>
       {value => {
-        const {productData, quantity, similarProductsData} = this.state
+        const {
+          productData,
+          quantity,
+          similarProductsData,
+          addedToCartQuantity,
+        } = this.state
         const {
           availability,
           brand,
@@ -131,14 +137,14 @@ class ProductItemDetails extends Component {
           const existingCartItem = cartList.find(
             item => item.id === productData.id,
           )
+
+          let updatedQuantity = quantity
           if (existingCartItem) {
-            // If the product is already in the cart, update its quantity
-            const updatedQuantity = existingCartItem.quantity + quantity
-            addCartItem({...productData, quantity: updatedQuantity})
-          } else {
-            // If the product is not in the cart, add it
-            addCartItem({...productData, quantity})
+            updatedQuantity += existingCartItem.quantity
           }
+
+          addCartItem({...productData, quantity: updatedQuantity})
+          this.setState({addedToCartQuantity: updatedQuantity}) // Update state
         }
 
         return (
@@ -195,6 +201,11 @@ class ProductItemDetails extends Component {
                 >
                   ADD TO CART
                 </button>
+                {addedToCartQuantity > 0 && (
+                  <p className="added-to-cart-message">
+                    {addedToCartQuantity} quantity of the product added
+                  </p>
+                )}
               </div>
             </div>
             <h1 className="similar-products-heading">Similar Products</h1>

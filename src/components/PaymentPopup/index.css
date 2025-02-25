@@ -1,0 +1,107 @@
+/* Popup Container */
+.popup-container {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  font-family: 'Arial', sans-serif;
+}
+
+/* Heading */
+h2 {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Payment Options */
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.payment-options label {
+  font-size: 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #444;
+}
+
+.payment-options input {
+  transform: scale(1.2);
+}
+
+/* Summary */
+.summary {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 10px;
+  text-align: left;
+  font-size: 16px;
+  color: #555;
+  font-weight: 500;
+}
+
+.summary p {
+  margin: 5px 0;
+}
+
+/* Checkout Button */
+.checkout-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  transition: 0.3s ease;
+  margin-top: 10px;
+}
+
+.checkout-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Confirm Button */
+.confirm-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  background-color: #28a745;
+  color: white;
+  margin-top: 15px;
+}
+
+.confirm-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.confirm-btn:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .popup-container {
+    width: 90%;
+    padding: 20px;
+  }
+}

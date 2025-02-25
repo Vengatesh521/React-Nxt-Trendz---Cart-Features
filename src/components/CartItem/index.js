@@ -38,7 +38,7 @@ const CartItem = ({cartItemDetails}) => {
               </div>
               <div className="cart-quantity-container">
                 <button
-                  data-testid={`minus-${id}`}
+                  data-testid="minus"
                   type="button"
                   onClick={onDecrementQuantity}
                   className="quantity-controller-button"
@@ -49,7 +49,7 @@ const CartItem = ({cartItemDetails}) => {
                   {quantity}
                 </p>
                 <button
-                  data-testid={`plus-${id}`}
+                  data-testid="plus"
                   type="button"
                   onClick={onIncrementQuantity}
                   className="quantity-controller-button"
@@ -60,7 +60,7 @@ const CartItem = ({cartItemDetails}) => {
               <div className="total-price-remove-container">
                 <p className="cart-total-price">Rs {price * quantity}/-</p>
                 <button
-                  data-testid={`remove-${id}`}
+                  data-testid="remove"
                   className="remove-button"
                   type="button"
                   onClick={onRemoveCartItem}
