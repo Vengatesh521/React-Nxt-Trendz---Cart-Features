@@ -162,3 +162,42 @@
     width: 70%;
   }
 }
+
+.recently-viewed-section {
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.recently-viewed-section h2 {
+  font-size: 22px;
+  font-family: 'Roboto';
+  color: #171f46;
+  margin-bottom: 12px;
+}
+
+.recently-viewed-list {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-left: 0;
+  list-style-type: none;
+  gap: 16px;
+}
+
+.recently-viewed-list::-webkit-scrollbar {
+  height: 6px;
+}
+
+.recently-viewed-list::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}
+
+.recently-viewed-list::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+.recently-viewed-list li {
+  flex: 0 0 auto;
+  width: 200px;
+}

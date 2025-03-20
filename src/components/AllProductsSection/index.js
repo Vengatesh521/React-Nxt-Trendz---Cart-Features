@@ -9,37 +9,16 @@ import ProductsHeader from '../ProductsHeader'
 import './index.css'
 
 const categoryOptions = [
-  {
-    name: 'Clothing',
-    categoryId: '1',
-  },
-  {
-    name: 'Electronics',
-    categoryId: '2',
-  },
-  {
-    name: 'Appliances',
-    categoryId: '3',
-  },
-  {
-    name: 'Grocery',
-    categoryId: '4',
-  },
-  {
-    name: 'Toys',
-    categoryId: '5',
-  },
+  {name: 'Clothing', categoryId: '1'},
+  {name: 'Electronics', categoryId: '2'},
+  {name: 'Appliances', categoryId: '3'},
+  {name: 'Grocery', categoryId: '4'},
+  {name: 'Toys', categoryId: '5'},
 ]
 
 const sortbyOptions = [
-  {
-    optionId: 'PRICE_HIGH',
-    displayText: 'Price (High-Low)',
-  },
-  {
-    optionId: 'PRICE_LOW',
-    displayText: 'Price (Low-High)',
-  },
+  {optionId: 'PRICE_HIGH', displayText: 'Price (High-Low)'},
+  {optionId: 'PRICE_LOW', displayText: 'Price (Low-High)'},
 ]
 
 const ratingsList = [
@@ -75,6 +54,8 @@ const apiStatusConstants = {
 class AllProductsSection extends Component {
   state = {
     productsList: [],
+    recentlyViewedProducts:
+      JSON.parse(localStorage.getItem('recentlyViewed')) || [],
     apiStatus: apiStatusConstants.initial,
     activeOptionId: sortbyOptions[0].optionId,
     activeCategoryId: '',
@@ -87,17 +68,17 @@ class AllProductsSection extends Component {
   }
 
   getProducts = async () => {
-    this.setState({
-      apiStatus: apiStatusConstants.inProgress,
-    })
+    this.setState({apiStatus: apiStatusConstants.inProgress})
     const jwtToken = Cookies.get('jwt_token')
-    const {activeOptionId, activeCategoryId, searchInput, activeRatingId} =
-      this.state
+    const {
+      activeOptionId,
+      activeCategoryId,
+      searchInput,
+      activeRatingId,
+    } = this.state
     const apiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}&category=${activeCategoryId}&title_search=${searchInput}&rating=${activeRatingId}`
     const options = {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-      },
+      headers: {Authorization: `Bearer ${jwtToken}`},
       method: 'GET',
     }
     const response = await fetch(apiUrl, options)
@@ -116,10 +97,26 @@ class AllProductsSection extends Component {
         apiStatus: apiStatusConstants.success,
       })
     } else {
-      this.setState({
-        apiStatus: apiStatusConstants.failure,
-      })
+      this.setState({apiStatus: apiStatusConstants.failure})
     }
+  }
+
+  addToRecentlyViewed = product => {
+    let {recentlyViewedProducts} = this.state
+    recentlyViewedProducts = recentlyViewedProducts.filter(
+      p => p.id !== product.id,
+    )
+    recentlyViewedProducts.unshift(product)
+
+    if (recentlyViewedProducts.length > 5) {
+      recentlyViewedProducts.pop()
+    }
+
+    this.setState({recentlyViewedProducts})
+    localStorage.setItem(
+      'recentlyViewed',
+      JSON.stringify(recentlyViewedProducts),
+    )
   }
 
   renderLoadingView = () => (
@@ -161,7 +158,12 @@ class AllProductsSection extends Component {
         />
         <ul className="products-list">
           {productsList.map(product => (
-            <ProductCard productData={product} key={product.id} />
+            <li
+              key={product.id}
+              onClick={() => this.addToRecentlyViewed(product)}
+            >
+              <ProductCard productData={product} />
+            </li>
           ))}
         </ul>
       </div>
@@ -180,9 +182,23 @@ class AllProductsSection extends Component {
     )
   }
 
+  renderRecentlyViewed = () => {
+    const {recentlyViewedProducts} = this.state
+
+    return recentlyViewedProducts.length > 0 ? (
+      <div className="recently-viewed-section">
+        <h2>Recently Viewed Products</h2>
+        <ul className="recently-viewed-list">
+          {recentlyViewedProducts.map(product => (
+            <ProductCard productData={product} key={product.id} />
+          ))}
+        </ul>
+      </div>
+    ) : null
+  }
+
   renderAllProducts = () => {
     const {apiStatus} = this.state
-
     switch (apiStatus) {
       case apiStatusConstants.success:
         return this.renderProductsListView()
@@ -197,11 +213,7 @@ class AllProductsSection extends Component {
 
   clearFilters = () => {
     this.setState(
-      {
-        searchInput: '',
-        activeCategoryId: '',
-        activeRatingId: '',
-      },
+      {searchInput: '', activeCategoryId: '', activeRatingId: ''},
       this.getProducts,
     )
   }
@@ -226,20 +238,24 @@ class AllProductsSection extends Component {
     const {activeCategoryId, searchInput, activeRatingId} = this.state
 
     return (
-      <div className="all-products-section">
-        <FiltersGroup
-          searchInput={searchInput}
-          categoryOptions={categoryOptions}
-          ratingsList={ratingsList}
-          changeSearchInput={this.changeSearchInput}
-          enterSearchInput={this.enterSearchInput}
-          activeCategoryId={activeCategoryId}
-          activeRatingId={activeRatingId}
-          changeCategory={this.changeCategory}
-          changeRating={this.changeRating}
-          clearFilters={this.clearFilters}
-        />
-        {this.renderAllProducts()}
+      <div>
+        {this.renderRecentlyViewed()}
+
+        <div className="all-products-section">
+          <FiltersGroup
+            searchInput={searchInput}
+            categoryOptions={categoryOptions}
+            ratingsList={ratingsList}
+            changeSearchInput={this.changeSearchInput}
+            enterSearchInput={this.enterSearchInput}
+            activeCategoryId={activeCategoryId}
+            activeRatingId={activeRatingId}
+            changeCategory={this.changeCategory}
+            changeRating={this.changeRating}
+            clearFilters={this.clearFilters}
+          />
+          {this.renderAllProducts()}
+        </div>
       </div>
     )
   }
